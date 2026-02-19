@@ -1,0 +1,13 @@
+# Excessive IAM Access Key Creation
+index=cloudtrail eventName=CreateAccessKey
+| stats count by userIdentity.userName sourceIPAddress
+| where count > 2
+
+# Suspicious Console Login from Unusual Country
+index=cloudtrail eventName=ConsoleLogin
+| iplocation sourceIPAddress
+| search Country!="United States"
+
+# Privilege Escalation Detection
+index=cloudtrail eventName=AttachUserPolicy OR eventName=PutUserPolicy
+| stats count by userIdentity.userName
